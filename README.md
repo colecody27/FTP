@@ -1,14 +1,17 @@
 # CPSC471_FTP
 FTP server and client 
 
-# Team Members 
+## Team Members 
 
 Cody Cole - cwcole@csu.fullerton.edu
+
 Matthew Li - 
+
 Michael Yu - 
+
 Sara Wu - 
 
-# Programming Lanugage 
+## Programming Lanugage 
 Python 
 
-# Instructions
+## Instructions
