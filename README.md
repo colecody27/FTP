@@ -5,7 +5,7 @@ FTP server and client
 
 Cody Cole - cwcole@csu.fullerton.edu
 
-Matthew Li - 
+Matthew Li - matthewli@csu.fullerton.edu
 
 Michael Yu - 
 
