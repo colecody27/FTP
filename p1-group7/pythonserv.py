@@ -1,38 +1,38 @@
 # Server code
-from socket import ∗
+import socket
 
  # The port on which to listen
- serverPort = 12000
+serverPort = 12000
 
  # Create a TCP's socket
- serverSocket = socket( AF INET, SOCK STREAM)
+serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
  # Bind the socket to the port
- serverSocket.bind((’’, serverPort))
+serverSocket.bind(('', serverPort))
 
  # Start listening for incoming connections
- serverSocket.listen(1) 
- print ”The server is ready to receive ” 
+serverSocket.listen(1) 
+print ("The server is ready to receive")
 
  # Forever accept incoming connections
- while 1 :
- # Accept a connection ; get client ’ socket
- connectionSocket, addr = serverSocket.accept()
+while True :
+    # Accept a connection ; get client's socket
+    connectionSocket, addr = serverSocket.accept()
 
- # The temporary buffer
- tmpBuff= ”” 
+    # The temporary buffer
+    tmpBuff = "" 
+    data = ""
+    while len(data) != 40 :
+        # Receive whatever the newly connected client has to send
+        tmpBuff = connectionSocket.recv(40)
 
- while len(data) != 40 :
- # Receive whatever the newly connected client has to send
-tmpBuff = connectionSocket.recv(40)
+        # The other side unexpectedly closed it’s socket
+        if not tmpBuff :
+            break
 
- # The other side unexpectedly closed it’s socket
-if not tmpBuff :
-break
+        # Save the data
+        data += tmpBuff
+        print (data)
 
-# Save the data
-data += tmpBuff
-print data 
-
-# Close the socket
-connectionSocket.close()
+    # Close the socket
+    connectionSocket.close()
