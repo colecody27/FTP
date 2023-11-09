@@ -12,14 +12,18 @@ clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # Connect to the server
 clientSocket.connect((serverName, serverPort))
 
+# While Loop to send a file to server
 while True:
     print("Send file to server")
+    # Getting the input file name
     filename = input ("input filename you want to send: ")
+    # Open and read target file, if no file then break
     try:
         fi = open(filename, "r")
         data = fi.read()
         if not data:
             break
+        # If there is data, encode it and send it
         while data:
             clientSocket.send(str(data).encode())
             data = fi.read()
