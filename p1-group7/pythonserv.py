@@ -24,7 +24,7 @@ while True :
     data = ""
     while len(data) != 40 :
         # Receive whatever the newly connected client has to send
-        tmpBuff = connectionSocket.recv(40)
+        tmpBuff = connectionSocket.recv(40).decode()
 
         # The other side unexpectedly closed it’s socket
         if not tmpBuff :

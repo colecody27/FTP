@@ -3,7 +3,7 @@ import socket
 
 # Name and port number of the server to which want to connect
 #ip = socket.gethostbyname()
-serverName = 'ecs.fullerton.edu'
+serverName = "localhost"
 serverPort = 12000
 
 # Create a socket
@@ -20,7 +20,7 @@ bytesSent = 0
 # Keep sending bytes until all bytes are sent
 while bytesSent != len(data) :
     # Send that string !
-    bytesSent += clientSocket.send(data[bytesSent :])
+    bytesSent += clientSocket.send(data[bytesSent :].encode())
 
 # Close the socket
 clientSocket.close()
