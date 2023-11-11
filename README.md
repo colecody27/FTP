@@ -9,7 +9,7 @@ Matthew Li - matthewli@csu.fullerton.edu
 
 Michael Yu - 
 
-Sara Wu - 
+Sara Wu - wusara87@csu.fullerton.edu
 
 ## Programming Lanugage 
 Python 
