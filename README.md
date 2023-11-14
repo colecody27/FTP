@@ -7,7 +7,7 @@ Cody Cole - cwcole@csu.fullerton.edu
 
 Matthew Li - matthewli@csu.fullerton.edu
 
-Michael Yu - 
+Michael Yu - michaelyu31@csu.fullerton.edu
 
 Sara Wu - wusara87@csu.fullerton.edu
 
