@@ -9,33 +9,31 @@ import os
 def get(filename):
     # Print this is the right function
     print("I chose get")
-    print("Receiving file from server...")
 
     # Create data channel 
     dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    # Bind the socket to port 0
-    dataSocket.bind(('',0))
-
-    # Retreive the ephemeral port number
-    print ("I chose ephemeral port: ", dataSocket.getsockname()[1])
-
     # Connect to server 
-    dataSocket.connect(serverName, serverPort)
+    dataSocket.connect((serverName, 59116))
+
+    # Send filename to server
+    dataSocket.send(filename.encode())
 
     # Validate filename
     dirContents = os.listdir()
-
+    
     i = 0
     if(filename in dirContents):
         while filename in dirContents:
             i += 1
-        filename = str(i) + filename 
+            filename = str(i) + filename 
+        
 
     # Open file in append mode
     file = open(filename, "a")
 
     # Get the data from the server and decode it
+    print("Receiving file from server...")
     while True:
         # Receive data
         data = dataSocket.recv(40).decode()
@@ -50,7 +48,7 @@ def get(filename):
     # Success output
     print("SUCCESS")
     print(filename + " has been downloaded successfully")
-    print("Number of bytes downloaded: " + file.__sizeof__)
+    print("Number of bytes downloaded: " + str(os.stat(filename).st_size))
 
     # Close data channel 
     file.close()
@@ -67,26 +65,23 @@ def put(filename):
     # Create data channel 
     dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    # Bind the socket to port 0
-    dataSocket.bind(('',0))
-
-    # Retreive the ephemeral port number
-    print ("I chose ephemeral port: ", dataSocket.getsockname()[1])
-
     # Connect to server 
-    dataSocket.connect(serverName, serverPort)
+    dataSocket.connect((serverName, 59116))
 
     # Verify file is in directory
     dirContents = os.listdir()
     while filename not in dirContents:
         filename = input(filename + " was not found. Please re-enter filename.")
 
+    # Send filename to server 
+    dataSocket.send(filename.encode())
+
     file = open(filename, "r")
     
     # Upload file to server 
     print("Uploading file to server...")
     try:
-        dataSocket.sendAll(file).encode()
+        dataSocket.sendall(file.read().encode())
     except IOError:
         print("Unable to upload contents to server")
         file.close()
@@ -94,7 +89,7 @@ def put(filename):
 
     print("SUCCESS")
     print(filename + " has been uploaded successfully")
-    print("Number of bytes uploaded: " + file.__sizeof__)
+    print("Number of bytes uploaded: " + str(os.stat(filename).st_size))
 
     file.close()
     dataSocket.close()
@@ -105,28 +100,14 @@ def put(filename):
 def list():
     # Print this is the right function
     print("I chose list")
-    print("Outputting files found on server...")
+    print("Finding files on server...")
 
     # Create data channel 
     dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    # Bind the socket to port 0
-    dataSocket.bind(('',0))
-
-    # Retreive the ephemeral port number
-    print ("I chose ephemeral port: ", dataSocket.getsockname()[1])
-
     # Connect to server 
-    dataSocket.connect(serverName, serverPort)
-
-    # Create temp file to store server contents
-    try: # Create new file
-        file = open("servercontents.txt", "x") 
-    except IOError: # Overwrite contents of file
-        file = open("servercontents.txt", "w")
-
-    # Set file to append mode    
-    open(file, "a")
+    dataSocket.connect((serverName, 59116))
+    dirList = ""
 
     # Get the data from the server and decode it
     while True:
@@ -137,21 +118,19 @@ def list():
         if not data:
             break
         else:
-            file.write(data)        
+            dirList = dirList + data
     
     #Output contents of file
-    lines = file.readlines()
-    for line in lines:
+    for line in dirList.split("\n"):
         print(line)
 
     # Success output
     print("SUCCESS")
     print("Contents of server have been output successfully")
-    print("Number of bytes downloaded: " + file.__sizeof__)
+    print("Number of bytes downloaded: " + str(len(dirList.encode('utf-8')))) 
 
     # Close data channel 
     dataSocket.close()
-    file.close()
 
 # Name and port number of the server to which want to connect
 serverName = "localhost"
@@ -170,15 +149,29 @@ while True:
     print("ftp> put <file name> (Uploads file <file name> to the server)")
     print("ftp> ls (Lists files on the server)")
     print("ftp> quit (Disconnects from the server and exits)")
-    [command, filename] = input("ftp> ").split(" ")
+
+    # Validate user input
+    userInput = input("ftp> ").split(" ")
+    if(len(userInput) == 1):
+        command = userInput[0]
+    else:
+        command, filename = userInput[0], userInput[1]
 
     match command:
         case "get":
+            clientSocket.send(bytes("get", 'utf-8'))
             get(filename)
         case "put":
+            clientSocket.send(bytes("put", 'utf-8'))
             put(filename)
         case "ls":
+            clientSocket.send(bytes("ls", 'utf-8'))
             list()
         case "quit":
+            # clientSocket.send(bytes("quit", 'utf-8'))
+            clientSocket.send(command.encode())
             clientSocket.close()
-            break    
+            print("Connection closed" )
+            break
+        case _:
+            print("ftp> Command not found.")
