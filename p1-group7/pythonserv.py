@@ -8,6 +8,7 @@ import os.path
 def get():
     # Create data channel 
     dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    dataSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     # Bind the socket to port 0
     dataSocket.bind(('',59116))
@@ -52,7 +53,10 @@ def get():
 
     # Close data channel 
     file.close()
+    dataSocket.close()
     connectionSocket.close()
+    
+    
 
 # ************************************************
 # Uploads file to client
@@ -61,6 +65,7 @@ def get():
 def put():
     # Create data channel 
     dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    dataSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     # Bind the socket to port 
     dataSocket.bind(('',59116))
@@ -94,7 +99,10 @@ def put():
     print("Number of bytes uploaded: " + str(os.stat(filename).st_size) + "\n")
 
     file.close()
+    dataSocket.close()
     connectionSocket.close()
+    
+    
 
 # ************************************************
 # List files found on server
@@ -102,7 +110,8 @@ def put():
 def list():
     # Create data channel 
     dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
+    dataSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    
     # Bind the socket to port 0
     dataSocket.bind(('',59116))
 
@@ -130,6 +139,8 @@ def list():
     # Close connection
     dataSocket.close()
     connectionSocket.close()
+    
+    
 
  # The port on which to listen
 serverPort = 12000
