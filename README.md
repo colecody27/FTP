@@ -15,8 +15,8 @@ Sara Wu - wusara87@csu.fullerton.edu
 Python 
 
 ## Instructions
-1) Download files
-2) Create two terminals
+1) Download the files.
+2) Create two terminals.
 3) In the first terminal, run the Server using the command "python3 pythonserv.py". "The server is ready" message should show up.
 4) In the second terminal, run the Client using the command "python3 pythonclient.py".
 5) In the Client terminal, enter one of the provided commands: (get <filename>, put <filename>, ls, quit).
