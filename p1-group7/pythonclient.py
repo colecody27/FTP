@@ -4,22 +4,25 @@ import os
 import sys
 
 def main():
-    #creation of the Control Channel - stays active for the entire duration of the connection and accepts commands (Different form Data Channel)
+    # Store server's ephemeral port number
+    global dataPort
+
+    # Creation of the Control Channel - stays active for the entire duration of the connection and accepts commands (Different form Data Channel)
     global serverName
     serverName = sys.argv[1]
 
-    #Gets the port number from user when running file
+    # Gets the port number from user when running file
     serverPort = int(sys.argv[2])
 
-    #Creation of TCP socket
+    # Creation of TCP socket
     clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    #Connect to the server
+    # Connect to the server
     clientSocket.connect((serverName, serverPort))
     print(f"Made connection to {serverName}:{serverPort}")
 
     while True:
-        #Prompt user for command 
+        # Prompt user for command 
         print("ftp> get <file name> (Downloads file <file name> from the server)")
         print("ftp> put <file name> (Uploads file <file name> to the server)")
         print("ftp> ls (Lists files on the server)")
@@ -35,12 +38,15 @@ def main():
         match command:
             case "get":
                 clientSocket.send(bytes("get", 'utf-8'))
+                dataPort = int(clientSocket.recv(40).decode())
                 get(filename)
             case "put":
                 clientSocket.send(bytes("put", 'utf-8'))
+                dataPort = int(clientSocket.recv(40).decode())
                 put(filename)
             case "ls":
                 clientSocket.send(bytes("ls", 'utf-8'))
+                dataPort = int(clientSocket.recv(40).decode())
                 list()
             case "quit":
                 clientSocket.send(command.encode())
@@ -63,7 +69,7 @@ def get(filename):
     dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # Connect to server 
-    dataSocket.connect((serverName, 12001))
+    dataSocket.connect((serverName, dataPort))
 
     # Send filename to server
     dataSocket.send(filename.encode())
@@ -115,7 +121,7 @@ def put(filename):
     dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # Connect to server 
-    dataSocket.connect((serverName, 12001))
+    dataSocket.connect((serverName, dataPort))
 
     # Verify file is in directory
     dirContents = os.listdir()
@@ -155,7 +161,7 @@ def list():
     dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # Connect to server 
-    dataSocket.connect((serverName, 12001))
+    dataSocket.connect((serverName, dataPort))
     dirList = ""
 
     # Get the data from the server and decode it
