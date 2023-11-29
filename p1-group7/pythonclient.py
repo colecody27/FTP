@@ -56,6 +56,25 @@ def main():
             case _:
                 print("ftp> Command not found.")
 
+# ************************************************
+# Give unique names to files
+# @param filename - Name of file to be retreived from server
+# ************************************************
+def get_unique_filename(filename):
+        # Validate filename uniqueness in the local directory
+        dirContents = os.listdir()
+
+        # File doesn't exist, return original filename
+        if filename not in dirContents:
+            return filename  
+
+        i = 1
+        while True:
+            # Create a new filename by appending a numeric suffix
+            new_filename = f"{os.path.splitext(filename)[0]}_{i}{os.path.splitext(filename)[1]}"
+            if new_filename not in dirContents:
+                return new_filename  # Return unique filename
+            i += 1
 
 # ************************************************
 # Downloads file from server
@@ -73,19 +92,12 @@ def get(filename):
 
     # Send filename to server
     dataSocket.send(filename.encode())
-
-    # Validate filename
-    dirContents = os.listdir()
     
-    i = 0
-    if(filename in dirContents):
-        while filename in dirContents:
-            i += 1
-            filename = str(i) + filename 
-        
+    #generate a unqiue filename
+    new_filename = get_unique_filename(filename)   
 
     # Open file in append mode
-    file = open(filename, "a")
+    file = open(new_filename, "a")
 
     # Get the data from the server and decode it
     print("Receiving file from server...")
