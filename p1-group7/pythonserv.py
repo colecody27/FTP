@@ -17,7 +17,7 @@ def main():
     serverSocket.bind((hostName, serverPort))
 
     #Start listening for incoming connections
-    serverSocket.listen(5)
+    serverSocket.listen(1)
     
     print(f"Server started on {hostName}:{serverPort}")
 
@@ -52,7 +52,7 @@ def get():
     dataSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     # Bind the socket to port 0
-    dataSocket.bind((hostName, 59116))
+    dataSocket.bind((hostName, 12001))
 
     # Receive data channel connection from client
     dataSocket.listen(1) 
@@ -109,7 +109,7 @@ def put():
     dataSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     # Bind the socket to hostname and port 
-    dataSocket.bind((hostName, 59116))
+    dataSocket.bind((hostName, 12001))
 
     # Receive data channel connection from client
     dataSocket.listen(1) 
@@ -154,7 +154,7 @@ def list():
     dataSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     
     # Bind the socket to hostname and port
-    dataSocket.bind((hostName, 59116))
+    dataSocket.bind((hostName, 12001))
 
     # Receive data channel connection from client
     dataSocket.listen(1)

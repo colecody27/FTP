@@ -63,7 +63,7 @@ def get(filename):
     dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # Connect to server 
-    dataSocket.connect((serverName, 59116))
+    dataSocket.connect((serverName, 12001))
 
     # Send filename to server
     dataSocket.send(filename.encode())
@@ -115,7 +115,7 @@ def put(filename):
     dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # Connect to server 
-    dataSocket.connect((serverName, 59116))
+    dataSocket.connect((serverName, 12001))
 
     # Verify file is in directory
     dirContents = os.listdir()
@@ -150,12 +150,12 @@ def list():
     # Print this is the right function
     print("I chose list")
     print("Finding files on server...")
-
+    print(serverName)
     # Create data channel 
     dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # Connect to server 
-    dataSocket.connect((serverName, 59116))
+    dataSocket.connect((serverName, 12001))
     dirList = ""
 
     # Get the data from the server and decode it
