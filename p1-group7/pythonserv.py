@@ -12,26 +12,26 @@ def main():
     serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     #Bind the socket to the hostname and port
-    global hostName
     hostName = socket.gethostname()
-    serverSocket.bind((hostName, serverPort))
+    serverSocket.bind(('', serverPort))
 
     #Start listening for incoming connections
     serverSocket.listen(1)
     
     print(f"Server started on {hostName}:{serverPort}")
 
-    connectionSocket, addr = serverSocket.accept()
+    global servConnSocket
+    servConnSocket, addr = serverSocket.accept()
     print("Connection established")
 
     while True :
         # Receive command from user
         try:
-            command = connectionSocket.recv(40).decode()
+            command = servConnSocket.recv(40).decode()
         except IOError:
             print("Command has not been received properly. Connection has been closed. ")
             serverSocket.close()
-            connectionSocket.close()
+            servConnSocket.close()
             break
         
         match command:
@@ -43,7 +43,7 @@ def main():
                 list()
             case "quit":
                 serverSocket.close()
-                connectionSocket.close()
+                servConnSocket.close()
                 break 
 
 def get_unique_filename(filename):
@@ -62,13 +62,18 @@ def get_unique_filename(filename):
                 return new_filename  # Return unique filename
             i += 1
 
+# ************************************************
+# Downloads file from client
+# ************************************************
 def get():
     # Create data channel 
     dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    dataSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     # Bind the socket to port 0
-    dataSocket.bind((hostName, 12001))
+    dataSocket.bind(('', 0))
+
+    # Send ephemeral port number to client 
+    servConnSocket.sendall(str(dataSocket.getsockname()[1]).encode())
 
     # Receive data channel connection from client
     dataSocket.listen(1) 
@@ -107,19 +112,18 @@ def get():
     dataSocket.close()
     connectionSocket.close()
     
-    
-
 # ************************************************
 # Uploads file to client
-# @param filename - Name of file to be uploaded to client
 # ************************************************
 def put():
     # Create data channel 
     dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    dataSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     # Bind the socket to hostname and port 
-    dataSocket.bind((hostName, 12001))
+    dataSocket.bind(('', 0))
+
+    # Send ephemeral port number to client 
+    servConnSocket.sendall(str(dataSocket.getsockname()[1]).encode())
 
     # Receive data channel connection from client
     dataSocket.listen(1) 
@@ -153,18 +157,18 @@ def put():
     dataSocket.close()
     connectionSocket.close()
     
-    
-
 # ************************************************
 # List files found on server
 # ************************************************
 def list():
     # Create data channel 
     dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    dataSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     
     # Bind the socket to hostname and port
-    dataSocket.bind((hostName, 12001))
+    dataSocket.bind(('', 0))
+
+    # Send ephemeral port number to client 
+    servConnSocket.sendall(str(dataSocket.getsockname()[1]).encode())
 
     # Receive data channel connection from client
     dataSocket.listen(1)
