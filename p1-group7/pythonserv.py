@@ -46,6 +46,22 @@ def main():
                 connectionSocket.close()
                 break 
 
+def get_unique_filename(filename):
+        # Validate filename uniqueness in the local directory
+        dirContents = os.listdir()
+
+        # File doesn't exist, return original filename
+        if filename not in dirContents:
+            return filename  
+
+        i = 1
+        while True:
+            # Create a new filename by appending a numeric suffix
+            new_filename = f"{os.path.splitext(filename)[0]}_{i}{os.path.splitext(filename)[1]}"
+            if new_filename not in dirContents:
+                return new_filename  # Return unique filename
+            i += 1
+
 def get():
     # Create data channel 
     dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -61,17 +77,11 @@ def get():
     # Receive filename from client
     filename = connectionSocket.recv(40).decode()
 
-    # Validate filename
-    dirContents = os.listdir()
-
-    i = 0
-    if(filename in dirContents):
-        while filename in dirContents:
-            i += 1
-            filename = str(i) + filename 
-
+    # Generate a unqiue filename
+    new_filename = get_unique_filename(filename)   
+    
     # Open file in append mode
-    file = open(filename, "a")
+    file = open(new_filename, "a")
 
     # Print this is the right function
     print("Receiving file from client...")
