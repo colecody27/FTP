@@ -1,17 +1,58 @@
 # Server code
 import socket
 import os.path
+import sys
 
-# ************************************************
-# Downloads file from client
-# ************************************************
+def main():
+
+    #Set the port number to what the user inputs
+    serverPort = int(sys.argv[1])
+
+    #Create a TCP Socket
+    serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    #Bind the socket to the hostname and port
+    global hostName
+    hostName = socket.gethostname()
+    serverSocket.bind((hostName, serverPort))
+
+    #Start listening for incoming connections
+    serverSocket.listen(1)
+    
+    print(f"Server started on {hostName}:{serverPort}")
+
+    connectionSocket, addr = serverSocket.accept()
+    print("Connection established")
+
+    while True :
+        # Receive command from user
+        try:
+            command = connectionSocket.recv(40).decode()
+        except IOError:
+            print("Command has not been received properly. Connection has been closed. ")
+            serverSocket.close()
+            connectionSocket.close()
+            break
+        
+        match command:
+            case "get":
+                put()
+            case "put":
+                get()
+            case "ls":
+                list()
+            case "quit":
+                serverSocket.close()
+                connectionSocket.close()
+                break 
+
 def get():
     # Create data channel 
     dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     dataSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
     # Bind the socket to port 0
-    dataSocket.bind(('',59116))
+    dataSocket.bind((hostName, 12001))
 
     # Receive data channel connection from client
     dataSocket.listen(1) 
@@ -67,8 +108,8 @@ def put():
     dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     dataSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-    # Bind the socket to port 
-    dataSocket.bind(('',59116))
+    # Bind the socket to hostname and port 
+    dataSocket.bind((hostName, 12001))
 
     # Receive data channel connection from client
     dataSocket.listen(1) 
@@ -112,8 +153,8 @@ def list():
     dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     dataSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     
-    # Bind the socket to port 0
-    dataSocket.bind(('',59116))
+    # Bind the socket to hostname and port
+    dataSocket.bind((hostName, 12001))
 
     # Receive data channel connection from client
     dataSocket.listen(1)
@@ -139,43 +180,6 @@ def list():
     # Close connection
     dataSocket.close()
     connectionSocket.close()
-    
-    
 
- # The port on which to listen
-serverPort = 12000
-
- # Create a TCP's socket
-serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
- # Bind the socket to the port
-serverSocket.bind(('', serverPort))
-
- # Start listening for incoming connections
-serverSocket.listen(1) 
-print ("The server is ready")
-
-# Accept a connection ; get client's socket
-connectionSocket, addr = serverSocket.accept()
-print("Connection established")
-while True :
-    # Receive command from user
-    try:
-        command = connectionSocket.recv(40).decode()
-    except IOError:
-        print("Command has not been received properly. Connection has been closed. ")
-        serverSocket.close()
-        connectionSocket.close()
-        break
-    
-    match command:
-        case "get":
-            put()
-        case "put":
-            get()
-        case "ls":
-            list()
-        case "quit":
-            serverSocket.close()
-            connectionSocket.close()
-            break 
+if __name__ == '__main__':
+    main()

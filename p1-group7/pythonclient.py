@@ -1,6 +1,55 @@
 # Client code 
 import socket
 import os
+import sys
+
+def main():
+    #creation of the Control Channel - stays active for the entire duration of the connection and accepts commands (Different form Data Channel)
+    global serverName
+    serverName = sys.argv[1]
+
+    #Gets the port number from user when running file
+    serverPort = int(sys.argv[2])
+
+    #Creation of TCP socket
+    clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    #Connect to the server
+    clientSocket.connect((serverName, serverPort))
+    print(f"Made connection to {serverName}:{serverPort}")
+
+    while True:
+        #Prompt user for command 
+        print("ftp> get <file name> (Downloads file <file name> from the server)")
+        print("ftp> put <file name> (Uploads file <file name> to the server)")
+        print("ftp> ls (Lists files on the server)")
+        print("ftp> quit (Disconnects from the server and exits)")
+
+        # Validate user input
+        userInput = input("ftp> ").split(" ")
+        if (len(userInput) == 1):
+            command = userInput[0]
+        else:
+            command, filename = userInput[0], userInput[1]
+
+        match command:
+            case "get":
+                clientSocket.send(bytes("get", 'utf-8'))
+                get(filename)
+            case "put":
+                clientSocket.send(bytes("put", 'utf-8'))
+                put(filename)
+            case "ls":
+                clientSocket.send(bytes("ls", 'utf-8'))
+                list()
+            case "quit":
+                clientSocket.send(command.encode())
+                clientSocket.close()
+                print("Connection closed" )
+                break
+            case _:
+                print("ftp> Command not found.")
+
 
 # ************************************************
 # Downloads file from server
@@ -14,7 +63,7 @@ def get(filename):
     dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # Connect to server 
-    dataSocket.connect((serverName, 59116))
+    dataSocket.connect((serverName, 12001))
 
     # Send filename to server
     dataSocket.send(filename.encode())
@@ -66,7 +115,7 @@ def put(filename):
     dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # Connect to server 
-    dataSocket.connect((serverName, 59116))
+    dataSocket.connect((serverName, 12001))
 
     # Verify file is in directory
     dirContents = os.listdir()
@@ -101,12 +150,12 @@ def list():
     # Print this is the right function
     print("I chose list")
     print("Finding files on server...")
-
+    print(serverName)
     # Create data channel 
     dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # Connect to server 
-    dataSocket.connect((serverName, 59116))
+    dataSocket.connect((serverName, 12001))
     dirList = ""
 
     # Get the data from the server and decode it
@@ -132,46 +181,5 @@ def list():
     # Close data channel 
     dataSocket.close()
 
-# Name and port number of the server to which want to connect
-serverName = "localhost"
-serverPort = 12000
-
-# Create a socket
-clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
-
-# Connect to the server
-clientSocket.connect((serverName, serverPort))
-
-# Continiously accept user commands
-while True:
-    #Prompt user for command 
-    print("ftp> get <file name> (Downloads file <file name> from the server)")
-    print("ftp> put <file name> (Uploads file <file name> to the server)")
-    print("ftp> ls (Lists files on the server)")
-    print("ftp> quit (Disconnects from the server and exits)")
-
-    # Validate user input
-    userInput = input("ftp> ").split(" ")
-    if(len(userInput) == 1):
-        command = userInput[0]
-    else:
-        command, filename = userInput[0], userInput[1]
-
-    match command:
-        case "get":
-            clientSocket.send(bytes("get", 'utf-8'))
-            get(filename)
-        case "put":
-            clientSocket.send(bytes("put", 'utf-8'))
-            put(filename)
-        case "ls":
-            clientSocket.send(bytes("ls", 'utf-8'))
-            list()
-        case "quit":
-            # clientSocket.send(bytes("quit", 'utf-8'))
-            clientSocket.send(command.encode())
-            clientSocket.close()
-            print("Connection closed" )
-            break
-        case _:
-            print("ftp> Command not found.")
+if __name__ == "__main__":
+    main()
