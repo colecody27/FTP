@@ -30,6 +30,7 @@ def main():
 
         # Validate user input
         userInput = input("ftp> ").split(" ")
+        print()
         if (len(userInput) == 1):
             command = userInput[0]
         else:
@@ -81,9 +82,6 @@ def get_unique_filename(filename):
 # @param filename - Name of file to be retreived from server
 # ************************************************
 def get(filename):
-    # Print this is the right function
-    print("I chose get")
-
     # Create data channel 
     dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -115,7 +113,7 @@ def get(filename):
     # Success output
     print("SUCCESS")
     print(filename + " has been downloaded successfully")
-    print("Number of bytes downloaded: " + str(os.stat(filename).st_size))
+    print("Number of bytes downloaded: " + str(os.stat(filename).st_size) + "\n")
 
     # Close data channel 
     file.close()
@@ -126,9 +124,6 @@ def get(filename):
 # @param filename - Name of file to be retreived from server
 # ************************************************
 def put(filename):
-    # Print this is the right function
-    print("I chose put")
-
     # Create data channel 
     dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -156,7 +151,7 @@ def put(filename):
 
     print("SUCCESS")
     print(filename + " has been uploaded successfully")
-    print("Number of bytes uploaded: " + str(os.stat(filename).st_size))
+    print("Number of bytes uploaded: " + str(os.stat(filename).st_size) + "\n")
 
     file.close()
     dataSocket.close()
@@ -166,9 +161,9 @@ def put(filename):
 # ************************************************
 def list():
     # Print this is the right function
-    print("I chose list")
     print("Finding files on server...")
     print(serverName)
+    
     # Create data channel 
     dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -194,7 +189,7 @@ def list():
     # Success output
     print("SUCCESS")
     print("Contents of server have been output successfully")
-    print("Number of bytes downloaded: " + str(len(dirList.encode('utf-8')))) 
+    print("Number of bytes downloaded: " + str(len(dirList.encode('utf-8'))) + "\n") 
 
     # Close data channel 
     dataSocket.close()
