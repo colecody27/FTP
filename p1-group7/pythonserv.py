@@ -82,6 +82,11 @@ def get():
     # Receive filename from client
     filename = connectionSocket.recv(40).decode()
 
+    # Verify file is in directory
+    dirContents = os.listdir()
+    if(filename not in dirContents):
+        connectionSocket.close()
+        
     # Generate a unqiue filename
     new_filename = get_unique_filename(filename)   
     

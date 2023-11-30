@@ -88,6 +88,11 @@ def get(filename):
     # Connect to server 
     dataSocket.connect((serverName, dataPort))
 
+    # Verify file is in directory
+    dirContents = os.listdir()
+    while filename not in dirContents:
+        filename = input(filename + " was not found. Please re-enter filename.")
+        
     # Send filename to server
     dataSocket.send(filename.encode())
     
