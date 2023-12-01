@@ -23,4 +23,4 @@ Python
 6) To close the connection, enter "quit" in the Client terminal.
 
 Example Run
-<img width="1632" alt="Screenshot 2023-11-29 at 2 31 37 PM" src="https://github.com/colecody27/CPSC471_FTP/assets/71093271/e1455036-6310-4a12-8ecf-c62c373677f8">
+<img width="1488" alt="Screenshot 2023-11-30 at 4 32 04 PM" src="https://github.com/colecody27/CPSC471_FTP/assets/71093271/acaf1cb7-39b7-4f30-9380-46be0c86ab98">
