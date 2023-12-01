@@ -22,7 +22,7 @@ def main():
 
     global servConnSocket
     servConnSocket, addr = serverSocket.accept()
-    print("Connection established")
+    print("Connection established\n")
 
     while True :
         # Receive command from user
@@ -42,6 +42,7 @@ def main():
             case "ls":
                 list()
             case "quit":
+                print("Connection closed")
                 serverSocket.close()
                 servConnSocket.close()
                 break 
@@ -132,30 +133,31 @@ def put():
     # Receive filename from client
     filename = connectionSocket.recv(40).decode()
 
-    # Verify file is in directory
+    # File is not found on server
     dirContents = os.listdir()
-    if(filename not in dirContents):
+    if (filename not in dirContents):
+        print("FILE NOT FOUND\n")
         connectionSocket.close()
         
-        
-    # Upload file to server 
-    print("Uploading file to client...")
-    file = open(filename, "r")
-    try:
-        connectionSocket.sendall(file.read().encode())
-    except IOError:
-        print("Unable to upload contents to client")
+    else:  
+        # Upload file to client 
+        print("Uploading file to client...")
+        file = open(filename, "r")
+        try:
+            connectionSocket.sendall(file.read().encode())
+        except IOError:
+            print("Unable to upload contents to client")
+            file.close()
+            connectionSocket.close()
+
+        # Success output
+        print("SUCCESS")
+        print(filename + " has been uploaded successfully")
+        print("Number of bytes uploaded: " + str(os.stat(filename).st_size) + "\n")
+
         file.close()
+        dataSocket.close()
         connectionSocket.close()
-
-    # Success output
-    print("SUCCESS")
-    print(filename + " has been uploaded successfully")
-    print("Number of bytes uploaded: " + str(os.stat(filename).st_size) + "\n")
-
-    file.close()
-    dataSocket.close()
-    connectionSocket.close()
     
 # ************************************************
 # List files found on server

@@ -92,13 +92,13 @@ def get(filename):
     dataSocket.send(filename.encode())
     
     #generate a unqiue filename
-    new_filename = get_unique_filename(filename)   
+    filename = get_unique_filename(filename)   
 
     # Open file in append mode
-    file = open(new_filename, "a")
+    file = open(filename, "a")
 
     # Get the data from the server and decode it
-    print("Receiving file from server...")
+    print("Retreiving file from server...")
     while True:
         # Receive data
         data = dataSocket.recv(40).decode()
@@ -110,14 +110,22 @@ def get(filename):
         else:
             file.write(data)
 
-    # Success output
-    print("SUCCESS")
-    print(filename + " has been downloaded successfully")
-    print("Number of bytes downloaded: " + str(os.stat(filename).st_size) + "\n")
+    # Confirm that file was found on server 
+    fileSize = os.stat(filename).st_size
+    if (fileSize == 0):
+        print("FILE NOT FOUND\n")
+        os.remove(filename)
+        dataSocket.close()
+    
+    else:
+        # Success output
+        print("SUCCESS")
+        print(filename + " has been downloaded successfully")
+        print("Number of bytes downloaded: " + str(fileSize) + "\n")
 
-    # Close data channel 
-    file.close()
-    dataSocket.close()
+        # Close data channel 
+        file.close()
+        dataSocket.close()
 
 # ************************************************
 # Uploads file to server
@@ -133,7 +141,7 @@ def put(filename):
     # Verify file is in directory
     dirContents = os.listdir()
     while filename not in dirContents:
-        filename = input(filename + " was not found. Please re-enter filename.")
+        filename = input("FILE " + filename + " was not found. Please re-enter filename.\n")
 
     # Send filename to server 
     dataSocket.send(filename.encode())
