@@ -17,8 +17,8 @@ Python
 ## Instructions
 1) Download the files.
 2) Create two terminals.
-3) In the first terminal, run the Server using the command "python3 pythonserv.py". "The server is ready" message should show up.
-4) In the second terminal, run the Client using the command "python3 pythonclient.py".
+3) In the first terminal, run the Server using the command "python3 pythonserv.py <PORTNUMBER>". "The server is ready" message should show up.
+4) In the second terminal, run the Client using the command "python3 pythonclient.py <HOSTNAME> <PORTNUMBER>".
 5) In the Client terminal, enter one of the provided commands: (get <filename>, put <filename>, ls, quit).
 6) To close the connection, enter "quit" in the Client terminal.
 
