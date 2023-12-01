@@ -1,5 +1,8 @@
 # CPSC471_FTP
-FTP server and client 
+This program allows for FTP data transfer using python sockets to form a TCP connection between a server and client. 
+
+## Report
+https://docs.google.com/document/d/1-LnhZq9gxOZPE9JdZmXLg6QADRQaAPyUi_7DKYeFiWw/edit?usp=sharing
 
 ## Team Members 
 
